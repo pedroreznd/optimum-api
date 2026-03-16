@@ -8,7 +8,7 @@ import { getTimeframeParams } from '../lib/timeframes';
  */
 const router = Router();
 
-/** GET /api/stocks/quote/:symbol */
+/** Fetches a stock quote for `:symbol`; this route does not accept query parameters. */
 router.get('/quote/:symbol', async (req: Request, res: Response): Promise<void> => {
   try {
     const data = await finnhubGet('/quote', { symbol: req.params.symbol.toUpperCase() });
@@ -18,7 +18,7 @@ router.get('/quote/:symbol', async (req: Request, res: Response): Promise<void> 
   }
 });
 
-/** GET /api/stocks/candles/:symbol?timeframe=1W */
+/** Fetches stock candles for `:symbol`; accepts the optional `timeframe` query parameter. */
 router.get('/candles/:symbol', async (req: Request, res: Response): Promise<void> => {
   try {
     const { symbol } = req.params;
@@ -40,7 +40,7 @@ router.get('/candles/:symbol', async (req: Request, res: Response): Promise<void
   }
 });
 
-/** GET /api/stocks/search?q=apple */
+/** Searches stock symbols by text query; accepts the required `q` query parameter. */
 router.get('/search', async (req: Request, res: Response): Promise<void> => {
   try {
     const q = (req.query.q as string) ?? '';

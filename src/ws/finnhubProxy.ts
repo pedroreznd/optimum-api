@@ -9,9 +9,15 @@ type ClientMessage = {
 };
 
 /**
- * WebSocket proxy — clients connect here, this connects upstream to Finnhub WS.
- * Subscriptions from all connected clients are merged into a single upstream connection.
- * When the last client disconnects, the upstream connection is closed.
+ * WebSocket fan-out proxy for Finnhub trade data.
+ * A single upstream Finnhub connection is shared across all connected frontend clients, and incoming
+ * trade messages are broadcast to every local client listening on `/ws`.
+ *
+ * Reconnect behavior is centralized: if the upstream socket closes while frontend clients are still connected,
+ * the proxy schedules one reconnect attempt after a short delay and reuses the same shared connection.
+ *
+ * Subscription behavior is merged across clients: requested symbols are stored in one deduplicated set and
+ * replayed to Finnhub after reconnect so the upstream socket tracks the union of all active frontend interest.
  */
 export const createWsProxy = (server: Server): void => {
   const wss = new WebSocketServer({ server, path: '/ws' });

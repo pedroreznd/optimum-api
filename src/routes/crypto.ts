@@ -10,8 +10,8 @@ import { coinGeckoGet } from '../lib/coinGeckoClient';
 const router = Router();
 
 /**
- * CoinGecko uses full coin IDs, not ticker symbols.
- * This map translates our app symbols to CoinGecko IDs.
+ * CoinGecko identifies assets by full coin IDs rather than exchange-style ticker symbols.
+ * This mapping keeps the frontend API ticker-based while translating requests to CoinGecko's expected IDs.
  */
 const SYMBOL_TO_COINGECKO_ID: Record<string, string> = {
   BTC: 'bitcoin',
@@ -46,7 +46,7 @@ interface CoinGeckoMarket {
   last_updated: string;
 }
 
-/** GET /api/crypto/markets — bulk market data for all coins */
+/** Fetches bulk market data for all tracked crypto symbols; this route does not accept query parameters. */
 router.get('/markets', async (_req: Request, res: Response): Promise<void> => {
   try {
     const data = await coinGeckoGet<CoinGeckoMarket[]>('/coins/markets', {
@@ -77,7 +77,7 @@ router.get('/markets', async (_req: Request, res: Response): Promise<void> => {
   }
 });
 
-/** GET /api/crypto/quote/:symbol — Finnhub-compatible quote shape */
+/** Fetches a Finnhub-compatible crypto quote for `:symbol`; this route does not accept query parameters. */
 router.get('/quote/:symbol', async (req: Request, res: Response): Promise<void> => {
   try {
     const { symbol } = req.params;

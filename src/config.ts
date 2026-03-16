@@ -4,7 +4,8 @@ dotenv.config();
 
 /**
  * Centralized environment configuration.
- * All process.env access is contained here; never read process.env directly elsewhere.
+ * All `process.env` access is centralized here; never read environment variables directly elsewhere.
+ * Missing required values surface as runtime failures in the code paths that need them, not as build-time errors.
  */
 export const config = {
   port: Number(process.env.PORT ?? 3001),
